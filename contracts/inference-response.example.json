@@ -1,0 +1,14 @@
+﻿{
+  "job_id": "example-job-id",
+  "status": "completed",
+  "model_version": "bhsd-nnunet-v1.0.0",
+  "prediction": {
+    "lesion_voxels": 0,
+    "lesion_volume_ml": 0.0,
+    "mask_url": null,
+    "preview_url": null
+  },
+  "timing": {
+    "inference_seconds": 0.0
+  }
+}

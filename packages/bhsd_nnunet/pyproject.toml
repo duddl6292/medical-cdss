@@ -1,0 +1,16 @@
+﻿[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bhsd-nnunet"
+version = "0.1.0"
+description = "Custom nnU-Net components for BHSD hemorrhage segmentation"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "numpy==2.0.2",
+    "nnunetv2==2.8.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

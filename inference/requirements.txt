@@ -1,0 +1,11 @@
+﻿-c ../constraints.txt
+
+numpy
+nnunetv2
+
+mosec
+msgspec
+nibabel
+scipy
+python-dotenv
+google-cloud-storage

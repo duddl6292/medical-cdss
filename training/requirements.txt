@@ -1,0 +1,13 @@
+﻿-c ../constraints.txt
+
+numpy
+nnunetv2
+optuna
+
+nibabel
+scipy
+pandas
+matplotlib
+scikit-learn
+pytest
+ruff

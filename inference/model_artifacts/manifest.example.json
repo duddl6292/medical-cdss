@@ -1,0 +1,11 @@
+﻿{
+  "model_version": "bhsd-nnunet-v1.0.0",
+  "dataset": "BHSD",
+  "task": "binary_hemorrhage_segmentation",
+  "trainer_name": "nnUNetTrainerBHSD",
+  "configuration": "2d",
+  "folds": [0],
+  "checkpoint": "checkpoint_best.pth",
+  "threshold": 0.25,
+  "min_component_size": 30
+}

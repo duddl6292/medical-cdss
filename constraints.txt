@@ -1,0 +1,3 @@
+﻿numpy==2.0.2
+nnunetv2==2.8.1
+optuna==4.4.0

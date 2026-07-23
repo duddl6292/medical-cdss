@@ -1,0 +1,148 @@
+﻿# ==================================================
+# Secrets and environment variables
+# ==================================================
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+
+# ==================================================
+# Python
+# ==================================================
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyd
+*.so
+
+.venv/
+**/.venv/
+venv/
+**/venv/
+env/
+**/env/
+
+.pytest_cache/
+**/.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+*.egg-info/
+build/
+dist/
+
+# ==================================================
+# Jupyter
+# ==================================================
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# ==================================================
+# Django
+# ==================================================
+backend/db.sqlite3
+backend/media/
+backend/staticfiles/
+backend/logs/
+
+# Django migration files are committed
+
+# ==================================================
+# React / Vite
+# ==================================================
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+frontend/coverage/
+
+# package-lock.json is committed
+
+# ==================================================
+# Medical image data
+# ==================================================
+data/
+dataset/
+datasets/
+medical-data/
+
+*.nii
+*.nii.gz
+*.dcm
+*.mha
+*.mhd
+*.nrrd
+*.npz
+*.npy
+
+# ==================================================
+# nnU-Net directories
+# ==================================================
+nnUNet_raw/
+nnUNet_preprocessed/
+nnUNet_results/
+
+**/nnUNet_raw/
+**/nnUNet_preprocessed/
+**/nnUNet_results/
+
+# ==================================================
+# Model artifacts
+# ==================================================
+models/
+artifacts/
+checkpoints/
+weights/
+
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.pkl
+*.joblib
+
+inference/model_artifacts/*
+!inference/model_artifacts/README.md
+!inference/model_artifacts/manifest.example.json
+
+# ==================================================
+# Runtime files
+# ==================================================
+uploads/
+outputs/
+predictions/
+results/
+temp/
+tmp/
+
+# ==================================================
+# Experiment trackers
+# ==================================================
+wandb/
+mlruns/
+runs/
+tensorboard/
+lightning_logs/
+
+# ==================================================
+# Logs
+# ==================================================
+*.log
+logs/
+
+# ==================================================
+# IDE
+# ==================================================
+.vscode/
+.idea/
+*.code-workspace
+
+# ==================================================
+# Operating system
+# ==================================================
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,5 @@
+﻿{
+  "case_id": "case-001",
+  "input_url": "gs://bucket/uploads/case-001/image.nii.gz",
+  "model_version": "bhsd-nnunet-v1.0.0"
+}
