@@ -1,0 +1,14 @@
+.git
+.github
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/.env
+frontend/node_modules
+backend/db.sqlite3
+**/*.nii
+**/*.nii.gz
+**/*.pth
+**/*.pt
+**/models
+**/data

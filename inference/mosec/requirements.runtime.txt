@@ -1,0 +1,6 @@
+numpy==2.0.2
+nnunetv2==2.8.1
+nibabel
+scipy
+python-dotenv
+google-cloud-storage
