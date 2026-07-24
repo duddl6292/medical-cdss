@@ -42,8 +42,11 @@ async def run_inference(
         ) from exc
 
     return InferenceResponse(
-        job_id=request.job_id,
-        status="completed",
-        model_version=request.model_version,
-        result=result,
-    )
+    job_id=request.job_id,
+    case_id=request.case_id,
+    status=result.get("status", "completed"),
+    model_version=request.model_version,
+    prediction=result.get("prediction"),
+    timing=result.get("timing"),
+    error=result.get("error"),
+)
