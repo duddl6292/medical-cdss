@@ -111,12 +111,11 @@ inference/model_artifacts/*
 # ==================================================
 # Runtime files
 # ==================================================
-uploads/
-outputs/
-predictions/
-results/
-temp/
-tmp/
+/uploads/
+/outputs/
+/results/
+/temp/
+/tmp/
 
 # ==================================================
 # Experiment trackers

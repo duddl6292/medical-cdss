@@ -1,14 +1,22 @@
-﻿{
-  "job_id": "example-job-id",
+{
+  "job_id": "job-001",
+  "case_id": "case-001",
   "status": "completed",
   "model_version": "bhsd-nnunet-v1.0.0",
   "prediction": {
-    "lesion_voxels": 0,
-    "lesion_volume_ml": 0.0,
-    "mask_url": null,
-    "preview_url": null
+    "mask_uri": "gs://medical-cdss/results/job-001/mask.nii.gz",
+    "preview_uri": "gs://medical-cdss/results/job-001/preview.png",
+    "lesion_voxels": 56520,
+    "lesion_volume_ml": 14.07,
+    "shape": [512, 512, 32],
+    "spacing": [0.488281, 0.488281, 5.093584],
+    "preview_slice_index": 16
   },
   "timing": {
-    "inference_seconds": 0.0
-  }
+    "preprocessing_seconds": 1.2,
+    "inference_seconds": 13.7,
+    "postprocessing_seconds": 0.8,
+    "total_seconds": 15.7
+  },
+  "error": null
 }

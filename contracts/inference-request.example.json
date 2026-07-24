@@ -1,5 +1,10 @@
-﻿{
+{
+  "job_id": "job-001",
   "case_id": "case-001",
-  "input_url": "gs://bucket/uploads/case-001/image.nii.gz",
-  "model_version": "bhsd-nnunet-v1.0.0"
+  "input_uri": "gs://medical-cdss/uploads/case-001/image.nii.gz",
+  "model_version": "bhsd-nnunet-v1.0.0",
+  "parameters": {
+    "threshold": 0.25,
+    "min_component_size": 30
+  }
 }
