@@ -1,10 +1,10 @@
-﻿# Medical CDSS
+# Medical CDSS
 
 BHSD 뇌출혈 CT를 대상으로 nnU-Net 기반 병변 분할 결과를 제공하는 웹 프로젝트입니다.
 
 ## Architecture
 
-React → Django REST API → MOSEC → nnU-Net
+React → Django REST API → FastAPI Gateway → MOSEC → nnU-Net
 
 ## Repository Structure
 

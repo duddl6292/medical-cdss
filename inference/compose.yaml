@@ -1,0 +1,16 @@
+services:
+  mosec:
+    build:
+      context: ..
+      dockerfile: inference/mosec/Dockerfile
+
+    image: medical-cdss-mosec:dev
+    container_name: medical-cdss-mosec
+
+    ports:
+      - "8001:8000"
+
+    environment:
+      PYTHONUNBUFFERED: "1"
+
+    restart: unless-stopped
