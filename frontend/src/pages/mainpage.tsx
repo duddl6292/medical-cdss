@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const recentAnalyses = [
   {
     ctId: "CT-20260724-001",
@@ -50,33 +52,26 @@ function MainPage() {
       <div className="flex">
         <aside className="min-h-[calc(100vh-64px)] w-60 border-r bg-white p-4">
           <nav className="space-y-2">
-            <button
-              type="button"
-              className="w-full rounded-lg bg-blue-600 px-4 py-3 text-left font-medium text-white"
+            <Link
+              to="/"
+              className="block w-full rounded-lg bg-blue-600 px-4 py-3 text-left font-medium text-white"
             >
               대시보드
-            </button>
+            </Link>
 
-            <button
-              type="button"
-              className="w-full rounded-lg px-4 py-3 text-left text-slate-600 hover:bg-slate-100"
+            <Link
+              to="/upload"
+              className="block w-full rounded-lg px-4 py-3 text-left text-slate-600 hover:bg-slate-100"
             >
               CT 분석
-            </button>
+            </Link>
 
-            <button
-              type="button"
-              className="w-full rounded-lg px-4 py-3 text-left text-slate-600 hover:bg-slate-100"
-            >
-              분석 결과
-            </button>
-
-            <button
-              type="button"
-              className="w-full rounded-lg px-4 py-3 text-left text-slate-600 hover:bg-slate-100"
+            <Link
+              to="/history"
+              className="block w-full rounded-lg px-4 py-3 text-left text-slate-600 hover:bg-slate-100"
             >
               분석 기록
-            </button>
+            </Link>
           </nav>
         </aside>
 
@@ -92,12 +87,12 @@ function MainPage() {
               </p>
             </div>
 
-            <button
-              type="button"
+            <Link
+              to="/upload"
               className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700"
             >
               새 CT 분석
-            </button>
+            </Link>
           </section>
 
           <section className="mb-8 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -119,23 +114,24 @@ function MainPage() {
                 </p>
               </div>
 
-              <button
-                type="button"
+              <Link
+                to="/history"
                 className="text-sm font-medium text-blue-600 hover:text-blue-700"
               >
                 전체 보기
-              </button>
+              </Link>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-slate-50 text-sm text-slate-500">
-                  <tr>
+                  <tr> 
                     <th className="px-6 py-4 font-medium">CT ID</th>
                     <th className="px-6 py-4 font-medium">환자 ID</th>
                     <th className="px-6 py-4 font-medium">상태</th>
                     <th className="px-6 py-4 font-medium">진행률</th>
                     <th className="px-6 py-4 font-medium">등록일</th>
+                    <th className="px-6 py-4 font-medium">관리</th>
                   </tr>
                 </thead>
 
