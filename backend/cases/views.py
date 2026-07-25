@@ -17,16 +17,20 @@ class PredictView(APIView):
 
         case = serializer.save()
 
-        Prediction.objects.create(
+        prediction = Prediction.objects.create(
             case=case,
             status=Prediction.Status.WAITING,
             progress=0,
             elapsed_time=0.0,
-        )
+)
 
         return Response(
             {
                 "ct_id": case.ct_id,
+                "job_id": str(prediction.job_id),
+                "status": prediction.status,
+                "progress": prediction.progress,
+                "elapsed_time": prediction.elapsed_time,
             },
             status=status.HTTP_201_CREATED,
-        )
+)
