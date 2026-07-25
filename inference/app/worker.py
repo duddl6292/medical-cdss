@@ -1,1 +1,1 @@
-﻿"""Placeholder module for inference\app\worker.py."""
+﻿"""Placeholder module for inference/app/worker.py."""
