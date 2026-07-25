@@ -40,12 +40,12 @@ function MainPage() {
         <div className="flex items-center gap-4">
           <span className="text-sm text-slate-600">관리자</span>
 
-          <button
-            type="button"
+          <Link
+            to="/"
             className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
           >
-            로그아웃
-          </button>
+            대시보드
+          </Link>
         </div>
       </header>
 
