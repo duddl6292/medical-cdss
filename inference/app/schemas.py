@@ -1,1 +1,1 @@
-﻿"""Placeholder module for inference\app\schemas.py."""
+﻿"""Placeholder module for inference/app/schemas.py."""
