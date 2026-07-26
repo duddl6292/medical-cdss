@@ -47,6 +47,12 @@ function NiivueViewer({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const niivueRef = useRef<Niivue | null>(null);
 
+  const overlayOpacityRef = useRef(overlayOpacity);
+  const overlayVisibleRef = useRef(overlayVisible);
+  const viewerModeRef = useRef(viewerMode);
+
+
+
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [sliceIndex, setSliceIndex] = useState(1);
   const [sliceCount, setSliceCount] = useState(1);
@@ -64,7 +70,7 @@ function NiivueViewer({
     const half = Math.floor(visibleCount / 2);
 
     let start = Math.max(1, sliceIndex - half);
-    let end = Math.min(
+    const end = Math.min(
       sliceCount,
       start + visibleCount - 1,
     );
@@ -131,8 +137,8 @@ function NiivueViewer({
             url: maskUrl,
             name: "mask.nii.gz",
             colormap: "red",
-            opacity: overlayVisible
-              ? overlayOpacity
+            opacity: overlayVisibleRef.current
+              ? overlayOpacityRef.current
               : 0,
           });
         }
@@ -143,11 +149,17 @@ function NiivueViewer({
           return;
         }
 
-        setViewerSliceType(nv, viewerMode);
+        const initialViewerMode =
+          viewerModeRef.current;
+
+        setViewerSliceType(
+          nv,
+          initialViewerMode,
+        );
 
         const totalSlices = getSliceCount(
           nv,
-          viewerMode,
+          initialViewerMode,
         );
 
         const middleSlice = Math.max(
@@ -160,7 +172,7 @@ function NiivueViewer({
 
         moveToSlice(
           nv,
-          viewerMode,
+          initialViewerMode,
           middleSlice,
           totalSlices,
         );
@@ -177,7 +189,7 @@ function NiivueViewer({
           const nextSlice =
             getSliceIndexFromLocation(
               data,
-              viewerMode,
+              viewerModeRef.current,
               totalSlices,
             );
 
