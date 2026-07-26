@@ -96,14 +96,21 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
+<<<<<<< HEAD
         "NAME": "medical_cdss",
         "USER": "postgres",
         "PASSWORD": "비번이라구여",   # 깃에 올리기 전에 바꾸기
         "HOST": "localhost",
         "PORT": "5432",
+=======
+        "NAME": os.getenv("DB_NAME", "medical_cdss"),
+        "USER": os.getenv("DB_USER", "postgres"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "5432"),
+>>>>>>> e46e2f0fc2674de1dfa9756c73a82a3b29629c6a
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

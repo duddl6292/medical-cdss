@@ -1,0 +1,34 @@
+services:
+  mosec:
+    build:
+      context: ..
+      dockerfile: inference/mock_mosec/Dockerfile
+
+    image: medical-cdss-mock-mosec:dev
+
+    ports:
+      - "${MOSEC_PORT:-8000}:${MOSEC_PORT:-8000}"
+
+    environment:
+      PORT: "${MOSEC_PORT:-8000}"
+      MOCK_RESULTS_URI_PREFIX: "gs://mock-medical-cdss/results"
+      MOCK_TIMEOUT_SECONDS: "${MOCK_TIMEOUT_SECONDS:-35}"
+
+  gateway:
+    build:
+      context: ..
+      dockerfile: inference/gateway/Dockerfile
+
+    image: medical-cdss-inference-gateway:dev
+
+    ports:
+      - "${GATEWAY_PORT:-8001}:${GATEWAY_PORT:-8001}"
+
+    environment:
+      PORT: "${GATEWAY_PORT:-8001}"
+      MOSEC_URL: "http://mosec:${MOSEC_PORT:-8000}"
+      MOSEC_TIMEOUT_SECONDS: "${GATEWAY_MOSEC_TIMEOUT_SECONDS:-30}"
+      MODEL_VERSION: "bhsd-nnunet-v1.0.0"
+
+    depends_on:
+      - mosec
