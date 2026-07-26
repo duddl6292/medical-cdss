@@ -5,6 +5,7 @@ import UploadPage from "./pages/uploadpage";
 import ProgressPage from "./pages/progresspage";
 import ResultPage from "./pages/resultpage";
 import HistoryPage from "./pages/historypage";
+import LoginPage from "./pages/loginpage";
 
 function App() {
   return (
@@ -12,9 +13,10 @@ function App() {
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/upload" element={<UploadPage />} />
-        <Route path="/progress/:ct_id" element={<ProgressPage />} />
-        <Route path="/result/:ct_id" element={<ResultPage />} />
+        <Route path="/progress/:ctId" element={<ProgressPage />} />
+        <Route path="/result/:ctId" element={<ResultPage />} />
         <Route path="/history" element={<HistoryPage />} />
+        <Route path='/login' element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
   );

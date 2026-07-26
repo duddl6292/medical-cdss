@@ -49,6 +49,31 @@ function ProgressPage() {
           </div>
         </section>
 
+
+        {/* 전체 분석 흐름 */}
+        <section className="mb-6 rounded-2xl border border-slate-200 bg-white px-8 py-5 shadow-sm">
+          <div className="grid grid-cols-3 items-start">
+            <AnalysisFlowStep
+              number="✓"
+              label="CT 업로드"
+              state="completed"
+            />
+
+            <AnalysisFlowStep
+              number="2"
+              label="분석 진행"
+              state="active"
+            />
+
+            <AnalysisFlowStep
+              number="3"
+              label="결과 확인"
+              state="waiting"
+            />
+          </div>
+        </section>
+
+
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* 왼쪽 분석 진행 영역 */}
           <section className="space-y-6 lg:col-span-2">
@@ -183,5 +208,46 @@ function InfoRow({ label, value }: InfoRowProps) {
     </div>
   );
 }
+
+type AnalysisFlowStepProps = {
+  number: string;
+  label: string;
+  state: "completed" | "active" | "waiting";
+};
+
+function AnalysisFlowStep({
+  number,
+  label,
+  state,
+}: AnalysisFlowStepProps) {
+  const circleClass =
+    state === "active"
+      ? "bg-blue-600 text-white"
+      : state === "completed"
+        ? "bg-emerald-100 text-emerald-700"
+        : "bg-slate-200 text-slate-500";
+
+  const labelClass =
+    state === "active"
+      ? "text-blue-600"
+      : state === "completed"
+        ? "text-emerald-700"
+        : "text-slate-500";
+
+  return (
+    <div className="flex flex-col items-center text-center">
+      <div
+        className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${circleClass}`}
+      >
+        {number}
+      </div>
+
+      <span className={`mt-2 text-sm font-semibold ${labelClass}`}>
+        {label}
+      </span>
+    </div>
+  );
+}
+
 
 export default ProgressPage;
