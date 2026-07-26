@@ -1,0 +1,28 @@
+{
+  "dataset_id": 1,
+  "configuration": "2d",
+  "fold": 0,
+  "plans": "nnUNetPlans",
+  "common_config": "training/configs/architecture_sweep_common.json",
+  "output_root": "/home/stu03/medical-data/architecture_sweep",
+  "minimum_free_disk_gb": 8,
+  "max_retries_per_experiment": 3,
+  "experiments": [
+    {
+      "id": "EXP01_residual_encoder",
+      "trainer": "nnUNetTrainerBHSDResidualEncoderSweep"
+    },
+    {
+      "id": "EXP02_stage_attention",
+      "trainer": "nnUNetTrainerBHSDStageAttentionSweep"
+    },
+    {
+      "id": "EXP03_more_conv_blocks",
+      "trainer": "nnUNetTrainerBHSDMoreConvSweep"
+    },
+    {
+      "id": "EXP04_dropout",
+      "trainer": "nnUNetTrainerBHSDDropoutSweep"
+    }
+  ]
+}
