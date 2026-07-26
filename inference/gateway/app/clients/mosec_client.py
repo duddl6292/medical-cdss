@@ -59,6 +59,7 @@ async def request_inference(
     try:
         async with httpx.AsyncClient(
             timeout=settings.mosec_timeout_seconds,
+            trust_env=False,
         ) as client:
             response = await client.post(
                 url,

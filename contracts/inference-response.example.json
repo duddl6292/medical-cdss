@@ -1,22 +1,62 @@
 {
-  "job_id": "job-001",
-  "case_id": "case-001",
+  "schema_version": "1.0",
+  "job_id": "550e8400-e29b-41d4-a716-446655440000",
+  "case_id": 1,
   "status": "completed",
   "model_version": "bhsd-nnunet-v1.0.0",
-  "prediction": {
-    "mask_uri": "gs://medical-cdss/results/job-001/mask.nii.gz",
-    "preview_uri": "gs://medical-cdss/results/job-001/preview.png",
-    "lesion_voxels": 56520,
-    "lesion_volume_ml": 14.07,
+  "input": {
     "shape": [512, 512, 32],
-    "spacing": [0.488281, 0.488281, 5.093584],
-    "preview_slice_index": 16
+    "spacing_mm": [0.488281, 0.488281, 5.093584]
   },
-  "timing": {
-    "preprocessing_seconds": 1.2,
+  "model": {
+    "model_id": "stroke-bhsd-nnunet-25d-final-model",
+    "model_version": "bhsd-nnunet-v1.0.0",
+    "trainer_name": "nnUNetTrainerBHSD_Exp05_25DFinal",
+    "architecture": "PlainConvUNet",
+    "folds": [0],
+    "checkpoint": "checkpoint_best.pth",
+    "nnunet_configuration": "2d",
+    "input_mode": "2.5D_3Slice",
+    "slice_axis": 2,
+    "context_offsets": [-1, 0, 1],
+    "boundary_policy": "edge_replication",
+    "target_policy": "center_slice_mask",
+    "segmentation_decision": "nnunet_default_label_conversion"
+  },
+  "artifacts": {
+    "mask_uri": "gs://medical-cdss/results/550e8400-e29b-41d4-a716-446655440000/mask.nii.gz",
+    "result_json_uri": "gs://medical-cdss/results/550e8400-e29b-41d4-a716-446655440000/result.json",
+    "preview_uri": null,
+    "probability_uri": null,
+    "entropy_uri": null,
+    "uncertainty_uri": null
+  },
+  "result": {
+    "lesion_detected": true,
+    "lesion_voxel_count": 56520,
+    "voxel_volume_mm3": 1.2144038162639903,
+    "lesion_volume_mm3": 68638.10369524073,
+    "lesion_volume_ml": 68.63810369524073,
+    "lesion_slice_count": 3,
+    "lesion_slice_indices": [14, 15, 16],
+    "lesion_slice_start": 14,
+    "lesion_slice_end": 16,
+    "max_lesion_slice": 15,
+    "max_lesion_slice_voxel_count": 24810,
+    "slice_axis": 2,
+    "slice_index_base": 0
+  },
+  "performance": {
+    "input_download_seconds": 0.8,
+    "context_preparation_seconds": 1.2,
     "inference_seconds": 13.7,
     "postprocessing_seconds": 0.8,
-    "total_seconds": 15.7
+    "output_upload_seconds": 0.6,
+    "total_seconds": 17.1,
+    "gpu_memory_measured": true,
+    "gpu_peak_memory_mb": 8421.5
   },
+  "summary": "AI가 출혈 의심 영역을 3개 슬라이스에서 분할했으며, 계산된 병변 부피는 68.64 mL입니다.",
+  "message": "AI 분석 결과이며 의료진의 최종 진단을 대체하지 않습니다.",
   "error": null
 }

@@ -1,11 +1,11 @@
 ﻿-c ../constraints.txt
 
-numpy
-nnunetv2
-
-mosec
-msgspec
-nibabel
-scipy
-python-dotenv
-google-cloud-storage
+numpy==2.0.2
+nnunetv2==2.8.1
+torch==2.11.0
+mosec==0.9.7
+msgspec==0.21.1
+nibabel==5.4.2
+scipy==1.13.1
+python-dotenv==1.0.1
+google-cloud-storage==3.3.1

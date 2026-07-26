@@ -1,6 +1,4 @@
-"""Runnable development-only substitute for the MOSEC HTTP contract."""
-
-from __future__ import annotations
+"""Development-only strict v1 substitute for the MOSEC service."""
 
 import asyncio
 import os
@@ -13,18 +11,19 @@ from inference.gateway.app.schemas import (
     InferenceResponse,
 )
 
+
 app = FastAPI(
     title="Medical CDSS Mock MOSEC",
-    version="0.1.0",
+    version="1.0.0",
 )
 
-_SCENARIO_PREFIXES = {
-    "mock-timeout": "timeout",
-    "mock-http-500": "http_500",
-    "mock-invalid-json": "invalid_json",
-    "mock-invalid-response": "invalid_response",
-    "mock-identity-mismatch": "identity_mismatch",
-    "mock-contract-violation": "contract_violation",
+SCENARIO_JOB_IDS = {
+    "00000000-0000-4000-8000-000000000500": "http_500",
+    "00000000-0000-4000-8000-000000000501": "invalid_json",
+    "00000000-0000-4000-8000-000000000502": "invalid_response",
+    "00000000-0000-4000-8000-000000000503": "identity_mismatch",
+    "00000000-0000-4000-8000-000000000504": "contract_violation",
+    "00000000-0000-4000-8000-000000000505": "timeout",
 }
 
 
@@ -41,15 +40,6 @@ def _artifact_uri(
     )
 
 
-def _scenario(job_id: str) -> str | None:
-    """Select a development-only failure from a reserved job-id prefix."""
-
-    for prefix, scenario in _SCENARIO_PREFIXES.items():
-        if job_id == prefix or job_id.startswith(f"{prefix}-"):
-            return scenario
-    return None
-
-
 def _timeout_seconds() -> float:
     try:
         value = float(os.getenv("MOCK_TIMEOUT_SECONDS", "2"))
@@ -62,77 +52,79 @@ def _completed_response(
     request: InferenceRequest,
 ) -> InferenceResponse:
     return InferenceResponse(
+        schema_version="1.0",
         job_id=request.job_id,
         case_id=request.case_id,
         status="completed",
         model_version=request.model_version,
-        prediction={
+        input={
+            "shape": [512, 512, 32],
+            "spacing_mm": [0.5, 0.5, 5.0],
+        },
+        model={
+            "model_id": "mock-exp05-model",
+            "model_version": request.model_version,
+            "trainer_name": "nnUNetTrainerBHSD_Exp05_25DFinal",
+            "architecture": "PlainConvUNet",
+            "folds": [0],
+            "checkpoint": "checkpoint_best.pth",
+            "nnunet_configuration": "2d",
+            "input_mode": "2.5D_3Slice",
+            "slice_axis": 2,
+            "context_offsets": [-1, 0, 1],
+            "boundary_policy": "edge_replication",
+            "target_policy": "center_slice_mask",
+            "segmentation_decision": (
+                "nnunet_default_label_conversion"
+            ),
+        },
+        artifacts={
             "mask_uri": _artifact_uri(
                 request,
                 "mask.nii.gz",
             ),
-            "probability_uri": _artifact_uri(
-                request,
-                "probability.nii.gz",
-            ),
-            "entropy_uri": _artifact_uri(
-                request,
-                "entropy.nii.gz",
-            ),
-            "uncertainty_uri": _artifact_uri(
-                request,
-                "uncertainty.nii.gz",
-            ),
-            "result_uri": _artifact_uri(
+            "result_json_uri": _artifact_uri(
                 request,
                 "result.json",
             ),
             "preview_uri": None,
-            "lesion_voxels": 0,
+            "probability_uri": None,
+            "entropy_uri": None,
+            "uncertainty_uri": None,
+        },
+        result={
+            "lesion_detected": False,
+            "lesion_voxel_count": 0,
+            "voxel_volume_mm3": 1.25,
+            "lesion_volume_mm3": 0.0,
             "lesion_volume_ml": 0.0,
             "lesion_slice_count": 0,
             "lesion_slice_indices": [],
-            "bounding_box": None,
-            "shape": [512, 512, 32],
-            "spacing": [0.5, 0.5, 5.0],
-            "preview_slice_index": 16,
+            "lesion_slice_start": None,
+            "lesion_slice_end": None,
+            "max_lesion_slice": None,
+            "max_lesion_slice_voxel_count": 0,
+            "slice_axis": 2,
+            "slice_index_base": 0,
         },
-        timing={
-            "preprocessing_seconds": 0.01,
+        performance={
+            "input_download_seconds": 0.01,
+            "context_preparation_seconds": 0.01,
             "inference_seconds": 0.01,
             "postprocessing_seconds": 0.01,
-            "total_seconds": 0.03,
+            "output_upload_seconds": 0.01,
+            "total_seconds": 0.05,
             "gpu_memory_measured": False,
             "gpu_peak_memory_mb": None,
         },
-        postprocessing={
-            "probability_threshold": (
-                request.parameters.threshold
-            ),
-            "min_component_voxels": (
-                request.parameters.min_component_size
-            ),
-            "connectivity": 26,
-            "component_count_before": 0,
-            "component_count_after": 0,
-            "removed_component_count": 0,
-            "removed_voxel_count": 0,
-        },
-        xai={
-            "probability_definition": (
-                "mock probability; no model inference was run"
-            ),
-            "entropy_definition": (
-                "mock entropy; no model inference was run"
-            ),
-            "uncertainty_definition": (
-                "mock uncertainty; no model inference was run"
-            ),
-            "value_range": [0.0, 1.0],
-            "limitation": (
-                "Development-only response. It contains no medical result."
-            ),
-        },
+        summary=(
+            "개발용 Mock 응답이며 실제 의료 영상 추론을 "
+            "수행하지 않았습니다."
+        ),
+        message=(
+            "AI 분석 결과이며 의료진의 최종 진단을 "
+            "대체하지 않습니다."
+        ),
         error=None,
     )
 
@@ -140,8 +132,6 @@ def _completed_response(
 @app.get("/health")
 @app.get("/openapi")
 async def health() -> dict[str, str | bool]:
-    """Match the readiness path exposed by the real MOSEC runtime."""
-
     return {
         "status": "ready",
         "service": "mock-mosec",
@@ -156,18 +146,14 @@ async def health() -> dict[str, str | bool]:
 async def inference(
     request: InferenceRequest,
 ) -> InferenceResponse | Response:
-    """Return a deterministic contract-valid response without inference."""
-
-    scenario = _scenario(request.job_id)
+    scenario = SCENARIO_JOB_IDS.get(request.job_id)
 
     if scenario == "timeout":
         await asyncio.sleep(_timeout_seconds())
     elif scenario == "http_500":
         return JSONResponse(
             status_code=500,
-            content={
-                "error": "Forced Mock MOSEC HTTP failure.",
-            },
+            content={"error": "Forced Mock MOSEC HTTP failure."},
         )
     elif scenario == "invalid_json":
         return PlainTextResponse(
@@ -184,14 +170,15 @@ async def inference(
 
     if scenario == "identity_mismatch":
         return response.model_copy(
-            update={"job_id": "different-job"},
+            update={
+                "job_id": (
+                    "00000000-0000-4000-8000-000000000599"
+                )
+            },
         )
     if scenario == "contract_violation":
         payload = response.model_dump(mode="json")
-        payload["prediction"]["lesion_voxels"] = -1
-        return JSONResponse(
-            status_code=200,
-            content=payload,
-        )
+        payload["result"]["lesion_voxel_count"] = -1
+        return JSONResponse(status_code=200, content=payload)
 
     return response
