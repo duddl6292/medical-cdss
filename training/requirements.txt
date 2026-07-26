@@ -4,7 +4,7 @@ numpy
 nnunetv2
 optuna
 
-nibabel
+nibabel==5.4.2
 scipy
 pandas
 matplotlib
