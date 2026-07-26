@@ -10,9 +10,9 @@ class CaseUploadSerializer(serializers.ModelSerializer):
         read_only_fields = ["ct_id"]
 
     def validate_ct_file(self, file):
-        if not file.name.endswith(".nii.gz"):
+        if not file.name.lower().endswith((".nii", ".nii.gz")):
             raise serializers.ValidationError(
-                "CT 파일은 .nii.gz 형식만 업로드할 수 있습니다."
-            )
+                "CT 파일은 .nii 또는 .nii.gz 형식만 업로드할 수 있습니다."
+    )
 
         return file
