@@ -1,0 +1,28 @@
+{
+  "patch_size": [512, 512],
+  "batch_size": 1,
+
+  "loss_name": "dice_ce",
+  "weight_overlap": 1.0,
+  "weight_ce": 0.75,
+  "tversky_alpha": 0.5,
+  "tversky_beta": 0.5,
+
+  "optimizer": "adamw",
+  "initial_lr": 0.0005,
+  "weight_decay": 0.00001,
+  "scheduler": "poly",
+
+  "positive_case_ratio": 0.5,
+  "oversample_foreground_percent": 0.0,
+
+  "num_epochs": 2,
+  "num_iterations_per_epoch": 5,
+  "num_val_iterations_per_epoch": 2,
+
+  "early_stopping_min_epochs": 2,
+  "early_stopping_patience": 2,
+  "early_stopping_min_delta": 0.001,
+
+  "skip_actual_validation": true
+}
