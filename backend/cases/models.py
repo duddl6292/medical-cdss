@@ -9,5 +9,4 @@ class Case(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"CT {self.ct_id}"
-        
+        return f"CT {self.ct_id}"        

@@ -98,7 +98,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "medical_cdss",
         "USER": "postgres",
-        "PASSWORD": "leehan1020",   # 깃에 올리기 전에 바꾸기
+        "PASSWORD": "비번이라구여",   # 깃에 올리기 전에 바꾸기
         "HOST": "localhost",
         "PORT": "5432",
     }
