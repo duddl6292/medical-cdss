@@ -11,6 +11,7 @@ export type AnalysisStatus =
 
 export type CaseCreateResponse = {
   case_id: number;
+  subject_id: string;
   job_id: string;
   status: AnalysisStatus;
   progress: number;
@@ -19,10 +20,12 @@ export type CaseCreateResponse = {
 
 export async function requestAnalysis(
   ctFile: File,
+  subjectId: string,
 ): Promise<CaseCreateResponse> {
   const formData = new FormData();
 
   formData.append("ct_file", ctFile);
+  formData.append("subject_id", subjectId);
 
   const response =
     await apiClient.post<CaseCreateResponse>(

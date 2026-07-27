@@ -4,6 +4,7 @@ from .views import (
     PredictionArtifactView,
     PredictionHistoryView,
     PredictionResultView,
+    PredictionReviewView,
     PredictionStartView,
     PredictionStatusView,
 )
@@ -23,6 +24,11 @@ urlpatterns = [
         "result/<int:ct_id>/",
         PredictionResultView.as_view(),
         name="prediction-result",
+    ),
+    path(
+        "result/<int:ct_id>/review/",
+        PredictionReviewView.as_view(),
+        name="prediction-review",
     ),
     path(
         "result/<int:ct_id>/artifacts/<str:artifact>/",

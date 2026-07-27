@@ -8,6 +8,7 @@ import type {
 
 export type ResultResponse = {
   case_id: number;
+  subject_id: string;
   job_id: string;
   status: AnalysisStatus;
   progress: number;
@@ -34,6 +35,10 @@ export type ResultResponse = {
   gpu_peak_memory_mb: number | null;
   message: string;
   error_message: string | null;
+  review_status: "pending" | "reviewed";
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  review_note: string;
 
   created_at: string;
   updated_at: string;
@@ -47,5 +52,21 @@ export async function getAnalysisResult(
       `/api/v1/result/${caseId}/`,
     );
 
+  return response.data;
+}
+
+export async function reviewAnalysisResult(
+  caseId: number,
+  reviewNote: string,
+): Promise<{
+  review_status: "reviewed";
+  reviewed_by: string;
+  reviewed_at: string;
+  review_note: string;
+}> {
+  const response = await apiClient.post(
+    `/api/v1/result/${caseId}/review/`,
+    { note: reviewNote },
+  );
   return response.data;
 }

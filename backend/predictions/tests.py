@@ -2,6 +2,7 @@ from io import BytesIO
 from unittest.mock import Mock, patch
 
 from django.test import TestCase, override_settings
+from django.contrib.auth import get_user_model
 
 from cases.models import Case
 
@@ -74,8 +75,15 @@ class PredictionServiceTests(TestCase):
 @override_settings(GS_BUCKET_NAME="private-medical-data")
 class PredictionArtifactViewTests(TestCase):
     def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="clinician",
+            password="test",
+            is_staff=True,
+        )
+        self.client.force_login(self.user)
         self.case = Case.objects.create(
             ct_file="ct_files/sample.nii.gz",
+            subject_id="DEMO-001",
         )
         self.prediction = Prediction.objects.create(
             case=self.case,

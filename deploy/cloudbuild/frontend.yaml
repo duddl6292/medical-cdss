@@ -17,7 +17,8 @@ substitutions:
   _REGION: asia-southeast1
   _AR_REPOSITORY: bhsd-models
   _IMAGE_TAG: manual
-  _BACKEND_URL: http://localhost:8000
+  # Empty means same-origin /api; Nginx forwards it to BACKEND_ORIGIN at runtime.
+  _BACKEND_URL: ""
 
 options:
   logging: CLOUD_LOGGING_ONLY

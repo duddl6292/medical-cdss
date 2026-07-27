@@ -20,5 +20,6 @@ COPY frontend/nginx/default.conf.template \
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 ENV PORT=8080
+ENV BACKEND_ORIGIN=http://localhost:8000
 
 EXPOSE 8080

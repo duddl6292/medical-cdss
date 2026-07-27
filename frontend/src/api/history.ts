@@ -9,21 +9,30 @@ import type {
 export type HistoryItem = {
   case_id: number;
   job_id: string;
-  patient_id: string;
-  patient_name: string;
+  subject_id: string;
   status: AnalysisStatus;
   progress: number;
+  elapsed_time: number;
+  review_status: "pending" | "reviewed";
   created_at: string;
+  updated_at: string;
+  error_message: string | null;
+  result_available: boolean;
 };
 
 export type HistoryResponse = {
+  count: number;
   results: HistoryItem[];
 };
 
-export async function getAnalysisHistory(): Promise<HistoryResponse> {
+export async function getAnalysisHistory(params?: {
+  q?: string;
+  status?: string;
+}): Promise<HistoryResponse> {
   const response =
     await apiClient.get<HistoryResponse>(
       "/api/v1/history/",
+      { params },
     );
 
   return response.data;

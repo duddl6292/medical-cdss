@@ -1,19 +1,30 @@
 import mimetypes
 from pathlib import PurePosixPath
 from urllib.parse import urlparse
+from django.db.models import Q
 
 from django.conf import settings
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils import timezone
 from google.api_core.exceptions import NotFound
 from google.cloud import storage
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Prediction
 from .services import PredictionDispatchError, dispatch_prediction
+from cases.models import Case
+from common.models import AuditEvent
+
+
+class AuthenticatedAPIView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 RESULT_ARTIFACT_FIELDS = {
@@ -70,9 +81,11 @@ def _artifact_object_name(prediction, artifact):
 def _prediction_status_payload(prediction):
     return {
         "case_id": prediction.case.ct_id,
+        "subject_id": prediction.case.subject_id,
         "job_id": str(prediction.job_id),
         "status": prediction.status,
         "progress": prediction.progress,
+        "review_status": prediction.case.review_status,
         "elapsed_time": prediction.elapsed_time,
         "error_code": prediction.error_code or None,
         "error_message": prediction.error_message or None,
@@ -81,7 +94,7 @@ def _prediction_status_payload(prediction):
     }
 
 
-class PredictionStartView(APIView):
+class PredictionStartView(AuthenticatedAPIView):
     def post(self, request, ct_id):
         prediction = get_object_or_404(
             Prediction.objects.select_related("case"),
@@ -110,7 +123,7 @@ class PredictionStartView(APIView):
         return Response(_prediction_status_payload(prediction))
 
 
-class PredictionStatusView(APIView):
+class PredictionStatusView(AuthenticatedAPIView):
     def get(self, request, ct_id):
         prediction = get_object_or_404(
             Prediction,
@@ -120,7 +133,7 @@ class PredictionStatusView(APIView):
         return Response(_prediction_status_payload(prediction))
         
         
-class PredictionResultView(APIView):
+class PredictionResultView(AuthenticatedAPIView):
     def get(self, request, ct_id):
         prediction = get_object_or_404(
             Prediction,
@@ -175,6 +188,15 @@ class PredictionResultView(APIView):
                     result.inference_time_seconds
                 ),
                 "gpu_peak_memory_mb": result.gpu_peak_memory_mb,
+                "subject_id": prediction.case.subject_id,
+                "review_status": prediction.case.review_status,
+                "reviewed_by": (
+                    prediction.case.reviewed_by.username
+                    if prediction.case.reviewed_by
+                    else None
+                ),
+                "reviewed_at": prediction.case.reviewed_at,
+                "review_note": prediction.case.review_note,
                 "error_message": None,
                 "message": result.message,
                 "created_at": result.created_at,
@@ -183,7 +205,7 @@ class PredictionResultView(APIView):
         )
 
 
-class PredictionArtifactView(APIView):
+class PredictionArtifactView(AuthenticatedAPIView):
     def get(self, request, ct_id, artifact):
         prediction = get_object_or_404(
             Prediction.objects.select_related("case", "result"),
@@ -213,11 +235,20 @@ class PredictionArtifactView(APIView):
         )
 
 
-class PredictionHistoryView(APIView):
+class PredictionHistoryView(AuthenticatedAPIView):
     def get(self, request):
         predictions = Prediction.objects.select_related("case").order_by(
             "-case__created_at"
         )
+        keyword = request.query_params.get("q", "").strip()
+        status_filter = request.query_params.get("status", "").strip()
+        if keyword:
+            query = Q(case__subject_id__icontains=keyword)
+            if keyword.isdigit():
+                query |= Q(case__ct_id=int(keyword))
+            predictions = predictions.filter(query)
+        if status_filter in Prediction.Status.values:
+            predictions = predictions.filter(status=status_filter)
 
         history = [
             {
@@ -226,6 +257,8 @@ class PredictionHistoryView(APIView):
                 "status": prediction.status,
                 "progress": prediction.progress,
                 "elapsed_time": prediction.elapsed_time,
+                "subject_id": prediction.case.subject_id,
+                "review_status": prediction.case.review_status,
                 "created_at": prediction.case.created_at,
                 "updated_at": prediction.updated_at,
                 "error_message": prediction.error_message or None,
@@ -238,5 +271,47 @@ class PredictionHistoryView(APIView):
             {
                 "count": len(history),
                 "results": history,
+            }
+        )
+
+
+class PredictionReviewView(AuthenticatedAPIView):
+    def post(self, request, ct_id):
+        case = get_object_or_404(Case, ct_id=ct_id)
+        if not hasattr(case, "prediction"):
+            return Response(
+                {"detail": "분석 작업이 없습니다."},
+                status=status.HTTP_409_CONFLICT,
+            )
+        if case.prediction.status != Prediction.Status.COMPLETED:
+            return Response(
+                {"detail": "완료된 분석만 검토할 수 있습니다."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        case.review_status = Case.ReviewStatus.REVIEWED
+        case.reviewed_by = request.user
+        case.reviewed_at = timezone.now()
+        case.review_note = str(request.data.get("note", "")).strip()[:2000]
+        case.save(
+            update_fields=[
+                "review_status",
+                "reviewed_by",
+                "reviewed_at",
+                "review_note",
+            ]
+        )
+        AuditEvent.objects.create(
+            actor=request.user,
+            action="prediction.review",
+            target_type="case",
+            target_id=str(case.ct_id),
+        )
+        return Response(
+            {
+                "case_id": case.ct_id,
+                "review_status": case.review_status,
+                "reviewed_by": request.user.username,
+                "reviewed_at": case.reviewed_at,
             }
         )

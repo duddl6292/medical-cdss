@@ -11,6 +11,10 @@ const apiClient = axios.create({
     "http://localhost:8000",
 
   timeout: 360000,
+  withCredentials: true,
+  withXSRFToken: true,
+  xsrfCookieName: "csrftoken",
+  xsrfHeaderName: "X-CSRFToken",
 
   headers: {
     Accept: "application/json",

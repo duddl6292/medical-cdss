@@ -8,9 +8,11 @@ import type {
 
 export type StatusResponse = {
   case_id: number;
+  subject_id: string;
   job_id: string;
   status: AnalysisStatus;
   progress: number;
+  review_status: "pending" | "reviewed";
   elapsed_time: number;
   error_message: string | null;
   updated_at: string;
