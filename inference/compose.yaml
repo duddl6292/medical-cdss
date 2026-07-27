@@ -8,9 +8,26 @@ services:
     container_name: medical-cdss-mosec
 
     ports:
-      - "8001:8000"
+      - "8000:8000"
+
+    env_file:
+      - .env
 
     environment:
       PYTHONUNBUFFERED: "1"
+      GOOGLE_APPLICATION_CREDENTIALS: /var/run/secrets/google/application_default_credentials.json
+
+    volumes:
+      - type: bind
+        source: "${APPDATA}/gcloud/application_default_credentials.json"
+        target: /var/run/secrets/google/application_default_credentials.json
+        read_only: true
+
+      - type: volume
+        source: mosec-model-cache
+        target: /models
 
     restart: unless-stopped
+
+volumes:
+  mosec-model-cache:
