@@ -95,14 +95,16 @@ class PredictionArtifactViewTests(TestCase):
 
     def test_result_returns_backend_proxy_urls(self):
         response = self.client.get(
-            f"/api/v1/result/{self.case.ct_id}/"
+            f"/api/v1/result/{self.case.ct_id}/",
+            HTTP_X_FORWARDED_PROTO="https",
+            SERVER_PORT="443",
         )
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json()["mask_nifti_url"],
             (
-                f"http://testserver/api/v1/result/{self.case.ct_id}"
+                f"https://testserver/api/v1/result/{self.case.ct_id}"
                 "/artifacts/mask/"
             ),
         )

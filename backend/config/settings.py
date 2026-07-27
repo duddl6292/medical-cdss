@@ -51,6 +51,10 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# Cloud Run terminates TLS before forwarding requests to Gunicorn.
+# Trust only its standard proxy header so absolute artifact URLs remain HTTPS.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 
 # Application definition
 
