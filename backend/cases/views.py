@@ -26,11 +26,12 @@ class PredictView(APIView):
 
         return Response(
             {
-                "ct_id": case.ct_id,
+                "case_id": case.ct_id,
                 "job_id": str(prediction.job_id),
                 "status": prediction.status,
                 "progress": prediction.progress,
                 "elapsed_time": prediction.elapsed_time,
+                "created_at": case.created_at,
             },
             status=status.HTTP_201_CREATED,
-)
+        )

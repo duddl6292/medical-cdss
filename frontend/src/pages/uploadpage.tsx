@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import type { ChangeEvent, DragEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "../layouts/applayout";
+import { requestAnalysis } from "../api/analysis";
 
 function UploadPage() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // .nii 또는 .nii.gz 파일인지 검사
   const validateFile = (file: File) => {
@@ -80,16 +82,26 @@ function UploadPage() {
   };
 
   // 분석 시작
-  const handleStartAnalysis = () => {
+  const handleStartAnalysis = async () => {
     if (!selectedFile) {
       setErrorMessage("분석할 CT 파일을 먼저 선택해 주세요.");
       return;
     }
 
-    // API 연결 전 임시 ct_id
-    const temporaryCtId = `CT-${Date.now()}`;
+    setIsSubmitting(true);
+    setErrorMessage("");
 
-    navigate(`/progress/${temporaryCtId}`);
+    try {
+      const created = await requestAnalysis(selectedFile);
+      navigate(`/progress/${created.case_id}`);
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "CT 파일 업로드에 실패했습니다.",
+      );
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -265,10 +277,10 @@ function UploadPage() {
             <button
               type="button"
               onClick={handleStartAnalysis}
-              disabled={!selectedFile}
+              disabled={!selectedFile || isSubmitting}
               className="min-w-40 rounded-lg bg-blue-700 px-6 py-3 font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
-              분석 시작
+              {isSubmitting ? "업로드 중..." : "분석 시작"}
             </button>
           </div>
         </section>

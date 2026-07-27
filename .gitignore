@@ -116,6 +116,9 @@ inference/model_artifacts/*
 /results/
 /temp/
 /tmp/
+/test-data/private/
+/.venv_broken_*/
+/GoogleCloudSDKInstaller.exe
 
 # ==================================================
 # Experiment trackers

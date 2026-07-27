@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "Medical CDSS Inference Gateway"
     mosec_url: str = "http://127.0.0.1:8001"
+    mosec_audience: str = ""
     mosec_timeout_seconds: float = 300.0
 
     model_config = SettingsConfigDict(

@@ -36,6 +36,17 @@ class Prediction(models.Model):
         default=0.0,
     )
 
+    error_code = models.CharField(
+        max_length=64,
+        blank=True,
+        default="",
+    )
+
+    error_message = models.TextField(
+        blank=True,
+        default="",
+    )
+
     updated_at = models.DateTimeField(
         auto_now=True,
     )
@@ -58,6 +69,31 @@ class PredictionResult(models.Model):
 
     # 분석 결과
     mask_path = models.CharField(max_length=500)
+    result_json_uri = models.CharField(
+        max_length=500,
+        blank=True,
+        default="",
+    )
+    preview_uri = models.CharField(
+        max_length=500,
+        blank=True,
+        default="",
+    )
+    probability_uri = models.CharField(
+        max_length=500,
+        blank=True,
+        default="",
+    )
+    entropy_uri = models.CharField(
+        max_length=500,
+        blank=True,
+        default="",
+    )
+    uncertainty_uri = models.CharField(
+        max_length=500,
+        blank=True,
+        default="",
+    )
     lesion_volume_ml = models.FloatField(default=0.0)
     lesion_slice_count = models.PositiveIntegerField(default=0)
 

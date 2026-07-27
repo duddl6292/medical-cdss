@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.conf import settings
 
 from .models import Case
 
@@ -13,6 +14,16 @@ class CaseUploadSerializer(serializers.ModelSerializer):
         if not file.name.lower().endswith((".nii", ".nii.gz")):
             raise serializers.ValidationError(
                 "CT 파일은 .nii 또는 .nii.gz 형식만 업로드할 수 있습니다."
-    )
+            )
+
+        if file.size <= 0:
+            raise serializers.ValidationError(
+                "빈 파일은 업로드할 수 없습니다."
+            )
+
+        if file.size > settings.MAX_NIFTI_UPLOAD_BYTES:
+            raise serializers.ValidationError(
+                "업로드 파일이 허용된 크기를 초과했습니다."
+            )
 
         return file

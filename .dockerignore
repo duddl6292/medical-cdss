@@ -12,3 +12,6 @@ backend/db.sqlite3
 **/*.pt
 **/models
 **/data
+test-data
+.venv_broken_*
+GoogleCloudSDKInstaller.exe

@@ -29,7 +29,16 @@ React → Django REST API → FastAPI Gateway → MOSEC → nnU-Net
 
 - React: 5173
 - Django: 8000
-- MOSEC: 8001 locally or 8080 on Cloud Run
+- FastAPI Gateway: 8100 locally or `$PORT` on Cloud Run
+- MOSEC: 8001 locally or `$PORT` on Cloud Run
+
+## GCP Integration
+
+- Runtime mapping: `docs/deployment/gcp-runtime.md`
+- Build config: `deploy/cloudbuild/services.yaml`
+- Cloud Run variables: `deploy/cloudrun/runtime.env.example`
+- Deployment script: `deploy/scripts/deploy_cloud_run.sh`
+- Merge and validation report: `INTEGRATION_REPORT.md`
 
 ## Branches
 

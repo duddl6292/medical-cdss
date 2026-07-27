@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "stroke-segmentation-123456"
+  },
+  "targets": {
+    "stroke-segmentation-123456": {
+      "hosting": {
+        "medical-cdss-poc": [
+          "medical-cdss-poc"
+        ]
+      }
+    }
+  }
+}

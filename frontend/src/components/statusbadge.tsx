@@ -13,11 +13,19 @@ const statusConfig: Record<
     label: "대기",
     className: "bg-amber-100 text-amber-700",
   },
+  waiting: {
+    label: "대기",
+    className: "bg-amber-100 text-amber-700",
+  },
   대기: {
     label: "대기",
     className: "bg-amber-100 text-amber-700",
   },
   running: {
+    label: "분석 중",
+    className: "bg-blue-100 text-blue-700",
+  },
+  processing: {
     label: "분석 중",
     className: "bg-blue-100 text-blue-700",
   },

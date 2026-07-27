@@ -1,30 +1,93 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import AppLayout from "../layouts/applayout";
 import ProgressBar from "../components/progressbar";
 import StatusBadge from "../components/statusbadge";
 import StepList from "../components/steplist";
+import {
+  startAnalysis,
+  type AnalysisStatus,
+} from "../api/analysis";
+import { getAnalysisStatus } from "../api/status";
 
 function ProgressPage() {
   const params = useParams();
 
-  const ctId =
-    params.ctId ??
-    params.ct_id ??
-    "CT-1784993333218";
+  const ctId = params.ctId ?? params.ct_id ?? "";
+  const caseId = Number(ctId);
+  const isValidCaseId =
+    Number.isInteger(caseId) && caseId > 0;
 
-  // 임시 시연 데이터
-  // Django API 연결 후 실제 응답 데이터로 교체
-  const [progress, setProgress] = useState(65);
-  const [status, setStatus] = useState("running");
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] =
+    useState<AnalysisStatus>(
+      isValidCaseId ? "waiting" : "failed",
+    );
+  const [errorMessage, setErrorMessage] =
+    useState<string | null>(
+      isValidCaseId ? null : "유효하지 않은 CT ID입니다.",
+    );
 
-  const handleRefresh = () => {
-    const nextProgress = Math.min(progress + 10, 100);
+  const applyStatus = useCallback(
+    (next: {
+      progress: number;
+      status: AnalysisStatus;
+      error_message?: string | null;
+    }) => {
+      setProgress(next.progress);
+      setStatus(next.status);
+      setErrorMessage(next.error_message ?? null);
+    },
+    [],
+  );
 
-    setProgress(nextProgress);
-    setStatus(nextProgress >= 100 ? "completed" : "running");
-  };
+  const handleRefresh = useCallback(async () => {
+    if (!isValidCaseId) {
+      setStatus("failed");
+      setErrorMessage("유효하지 않은 CT ID입니다.");
+      return;
+    }
+
+    try {
+      applyStatus(await getAnalysisStatus(caseId));
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "분석 상태 조회에 실패했습니다.",
+      );
+    }
+  }, [applyStatus, caseId, isValidCaseId]);
+
+  useEffect(() => {
+    if (!isValidCaseId) {
+      return;
+    }
+
+    let active = true;
+
+    startAnalysis(caseId)
+      .then((response) => {
+        if (active) {
+          applyStatus(response);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          void handleRefresh();
+        }
+      });
+
+    const timer = window.setInterval(() => {
+      void handleRefresh();
+    }, 3000);
+
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
+  }, [applyStatus, caseId, handleRefresh, isValidCaseId]);
 
   const isCompleted = progress >= 100;
   const isFailed = status === "failed";
@@ -49,6 +112,31 @@ function ProgressPage() {
           </div>
         </section>
 
+
+        {/* 전체 분석 흐름 */}
+        <section className="mb-6 rounded-2xl border border-slate-200 bg-white px-8 py-5 shadow-sm">
+          <div className="grid grid-cols-3 items-start">
+            <AnalysisFlowStep
+              number="✓"
+              label="CT 업로드"
+              state="completed"
+            />
+
+            <AnalysisFlowStep
+              number="2"
+              label="분석 진행"
+              state="active"
+            />
+
+            <AnalysisFlowStep
+              number="3"
+              label="결과 확인"
+              state="waiting"
+            />
+          </div>
+        </section>
+
+
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* 왼쪽 분석 진행 영역 */}
           <section className="space-y-6 lg:col-span-2">
@@ -70,7 +158,8 @@ function ProgressPage() {
                   {isCompleted
                     ? "분석이 완료되었습니다. 결과 페이지에서 분석 결과를 확인하세요."
                     : isFailed
-                      ? "분석 중 오류가 발생했습니다. 담당자에게 문의해 주세요."
+                      ? errorMessage ??
+                        "분석 중 오류가 발생했습니다."
                       : "현재 AI 모델이 뇌 CT 영상의 병변 영역을 분석하고 있습니다."}
                 </p>
               </div>
@@ -183,5 +272,46 @@ function InfoRow({ label, value }: InfoRowProps) {
     </div>
   );
 }
+
+type AnalysisFlowStepProps = {
+  number: string;
+  label: string;
+  state: "completed" | "active" | "waiting";
+};
+
+function AnalysisFlowStep({
+  number,
+  label,
+  state,
+}: AnalysisFlowStepProps) {
+  const circleClass =
+    state === "active"
+      ? "bg-blue-600 text-white"
+      : state === "completed"
+        ? "bg-emerald-100 text-emerald-700"
+        : "bg-slate-200 text-slate-500";
+
+  const labelClass =
+    state === "active"
+      ? "text-blue-600"
+      : state === "completed"
+        ? "text-emerald-700"
+        : "text-slate-500";
+
+  return (
+    <div className="flex flex-col items-center text-center">
+      <div
+        className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${circleClass}`}
+      >
+        {number}
+      </div>
+
+      <span className={`mt-2 text-sm font-semibold ${labelClass}`}>
+        {label}
+      </span>
+    </div>
+  );
+}
+
 
 export default ProgressPage;

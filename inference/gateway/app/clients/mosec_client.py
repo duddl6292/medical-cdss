@@ -1,6 +1,9 @@
 from typing import Any
 
+import anyio
 import httpx
+from google.auth.transport.requests import Request
+from google.oauth2 import id_token
 
 from app.config import settings
 from app.schemas import InferenceRequest
@@ -33,6 +36,15 @@ class MosecHTTPError(MosecClientError):
     error_code = "MOSEC_HTTP_ERROR"
     status_code = 502
 
+    def __init__(
+        self,
+        message: str,
+        *,
+        upstream_status_code: int,
+    ) -> None:
+        super().__init__(message)
+        self.upstream_status_code = upstream_status_code
+
 
 class MosecInvalidJSONError(MosecClientError):
     """MOSEC 응답을 JSON으로 해석할 수 없는 경우."""
@@ -48,6 +60,22 @@ class MosecInvalidResponseError(MosecClientError):
     status_code = 502
 
 
+def _fetch_id_token(audience: str) -> str:
+    return id_token.fetch_id_token(Request(), audience)
+
+
+async def _authorization_headers() -> dict[str, str]:
+    audience = settings.mosec_audience.strip()
+    if not audience:
+        return {}
+
+    token = await anyio.to_thread.run_sync(
+        _fetch_id_token,
+        audience,
+    )
+    return {"Authorization": f"Bearer {token}"}
+
+
 async def request_inference(
     request: InferenceRequest,
 ) -> dict[str, Any]:
@@ -59,10 +87,12 @@ async def request_inference(
     try:
         async with httpx.AsyncClient(
             timeout=settings.mosec_timeout_seconds,
+            trust_env=False,
         ) as client:
             response = await client.post(
                 url,
                 json=payload,
+                headers=await _authorization_headers(),
             )
 
             response.raise_for_status()
@@ -83,7 +113,8 @@ async def request_inference(
     except httpx.HTTPStatusError as exc:
         raise MosecHTTPError(
             f"MOSEC returned HTTP "
-            f"{exc.response.status_code}."
+            f"{exc.response.status_code}.",
+            upstream_status_code=exc.response.status_code,
         ) from exc
 
     # 연결 거부, DNS 오류, 네트워크 오류 등의 경우
