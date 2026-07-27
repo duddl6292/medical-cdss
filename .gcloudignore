@@ -1,0 +1,16 @@
+.git
+.git/**
+.venv
+.venv/**
+**/__pycache__/**
+**/.pytest_cache/**
+frontend/node_modules/**
+frontend/dist/**
+backend/media/**
+backend/staticfiles/**
+cloud-sql-proxy.exe
+*.nii
+*.nii.gz
+*.pth
+*.pt
+training/**
