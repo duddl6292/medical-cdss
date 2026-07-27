@@ -1,15 +1,23 @@
-// 분석 결과 파일 다운로드 API
-// GET /api/v1/download/{case_id}/
-
 import apiClient from "./axios";
+
+export type ResultArtifact =
+  | "original"
+  | "mask"
+  | "result"
+  | "preview"
+  | "probability"
+  | "entropy"
+  | "uncertainty";
 
 export async function downloadResultFile(
   ctId: number,
+  artifact: ResultArtifact = "mask",
 ): Promise<void> {
   const response =
     await apiClient.get<Blob>(
-      `/api/v1/download/${ctId}/`,
+      `/api/v1/result/${ctId}/artifacts/${artifact}/`,
       {
+        params: { download: 1 },
         responseType: "blob",
       },
     );
@@ -23,8 +31,11 @@ export async function downloadResultFile(
     document.createElement("a");
 
   link.href = downloadUrl;
-  link.download =
-    `ct-analysis-${ctId}.zip`;
+  link.download = getDownloadFilename(
+    ctId,
+    artifact,
+    response.headers["content-disposition"],
+  );
 
   document.body.appendChild(link);
   link.click();
@@ -33,4 +44,23 @@ export async function downloadResultFile(
   window.URL.revokeObjectURL(
     downloadUrl,
   );
+}
+
+function getDownloadFilename(
+  ctId: number,
+  artifact: ResultArtifact,
+  contentDisposition?: string,
+): string {
+  const encodedFilename = contentDisposition?.match(
+    /filename\*=UTF-8''([^;]+)/i,
+  )?.[1];
+  const filename = contentDisposition?.match(
+    /filename="?([^";]+)"?/i,
+  )?.[1];
+
+  if (encodedFilename) {
+    return decodeURIComponent(encodedFilename);
+  }
+
+  return filename ?? `ct-${ctId}-${artifact}`;
 }

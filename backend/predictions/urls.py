@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    PredictionArtifactView,
     PredictionHistoryView,
     PredictionResultView,
     PredictionStartView,
@@ -22,6 +23,11 @@ urlpatterns = [
         "result/<int:ct_id>/",
         PredictionResultView.as_view(),
         name="prediction-result",
+    ),
+    path(
+        "result/<int:ct_id>/artifacts/<str:artifact>/",
+        PredictionArtifactView.as_view(),
+        name="prediction-artifact",
     ),
     path(
         "history/",

@@ -16,10 +16,23 @@ export type ResultResponse = {
   original_nifti_url: string | null;
   mask_nifti_url: string | null;
   preview_image_url: string | null;
+  result_json_uri: string | null;
+  probability_uri: string | null;
+  entropy_uri: string | null;
+  uncertainty_uri: string | null;
 
   lesion_volume_ml: number | null;
-  confidence: number | null;
+  lesion_slice_count: number;
+  lesion_slice_start: number | null;
+  lesion_slice_end: number | null;
+  max_lesion_slice: number | null;
+  model_id: string;
   model_version: string | null;
+  folds: number[];
+  checkpoint: string;
+  inference_time_seconds: number;
+  gpu_peak_memory_mb: number | null;
+  message: string;
   error_message: string | null;
 
   created_at: string;
