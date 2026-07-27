@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from cases.models import Case
 from predictions.models import Prediction
+from .models import UserProfile
 
 
 class AuthenticationApiTests(TestCase):
@@ -12,9 +13,14 @@ class AuthenticationApiTests(TestCase):
         self.user = get_user_model().objects.create_user(
             username="clinician",
             password=self.password,
-            is_staff=True,
+            is_staff=False,
             first_name="Test",
             last_name="Clinician",
+        )
+        UserProfile.objects.create(
+            user=self.user,
+            role=UserProfile.Role.CLINICIAN,
+            department="신경외과",
         )
         self.client = Client(enforce_csrf_checks=True)
 
@@ -49,6 +55,24 @@ class AuthenticationApiTests(TestCase):
             {"username": self.user.username, "password": self.password},
             content_type="application/json",
         )
+        self.assertEqual(response.status_code, 403)
+
+    def test_profileless_non_staff_account_is_rejected(self):
+        user = get_user_model().objects.create_user(
+            username="unapproved",
+            password=self.password,
+            is_staff=False,
+        )
+        csrf_response = self.client.get(reverse("auth-csrf"))
+        token = csrf_response.cookies["csrftoken"].value
+
+        response = self.client.post(
+            reverse("auth-login"),
+            {"username": user.username, "password": self.password},
+            content_type="application/json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+
         self.assertEqual(response.status_code, 403)
 
 

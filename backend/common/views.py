@@ -76,7 +76,11 @@ class LoginView(APIView):
                 {"detail": "아이디 또는 비밀번호가 올바르지 않습니다."},
                 status=400,
             )
-        if not (user.is_staff or user.is_superuser):
+        has_clinical_role = UserProfile.objects.filter(
+            user=user,
+            role__in=UserProfile.Role.values,
+        ).exists()
+        if not (has_clinical_role or user.is_staff or user.is_superuser):
             return Response(
                 {"detail": "승인된 의료진 계정만 사용할 수 있습니다."},
                 status=403,

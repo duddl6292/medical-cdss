@@ -60,6 +60,17 @@ h2, .module caption, .inline-group h2 { font-weight: 750; }
   padding: 13px 16px; background: #eef4fd; color: #123d7b;
   font-size: 13px; letter-spacing: .01em;
 }
+.module caption a.section,
+.module caption a.section:link,
+.module caption a.section:visited {
+  color: #102f61;
+  font-size: 16px;
+  font-weight: 800;
+}
+.module caption a.section:hover,
+.module caption a.section:focus {
+  color: #0b56b5;
+}
 .dashboard .module table th { width: 100%; }
 .dashboard .module table td { white-space: nowrap; }
 .dashboard #content { width: auto; }
