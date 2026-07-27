@@ -621,7 +621,7 @@ class InferenceService:
             LesionMeasurementError,
             WorkerOrchestrationError,
         ) as error:
-            LOGGER.warning(
+            LOGGER.exception(
                 "MOSEC inference failed: code=%s",
                 error.code,
             )

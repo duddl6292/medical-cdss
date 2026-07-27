@@ -1,0 +1,20 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - inference/mosec/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/medical-cdss-mosec:${_IMAGE_TAG}
+      - .
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/medical-cdss-mosec:${_IMAGE_TAG}
+
+substitutions:
+  _REGION: asia-southeast1
+  _AR_REPOSITORY: bhsd-models
+  _IMAGE_TAG: manual
+
+options:
+  logging: CLOUD_LOGGING_ONLY
