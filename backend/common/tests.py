@@ -104,6 +104,7 @@ class MedicalAdminTests(TestCase):
             "https://medical-cdss-frontend-356595725907"
             ".asia-southeast1.run.app",
         )
+        self.assertNotContains(response, 'target="_blank"')
 
     def test_user_changelist_supports_profileless_existing_accounts(self):
         response = self.client.get("/admin/auth/user/")
