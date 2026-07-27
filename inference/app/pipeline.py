@@ -256,7 +256,23 @@ def _run_nnunet_prediction(
     output_path_without_extension: Path,
     config: InferencePipelineConfig,
 ) -> None:
-    """Run one file-based nnU-Net prediction without saving probabilities."""
+    """Run one file-based nnU-Net prediction without child processes."""
+
+    predict_sequentially = getattr(
+        predictor,
+        "predict_from_files_sequential",
+        None,
+    )
+
+    if callable(predict_sequentially):
+        predict_sequentially(
+            [[str(path) for path in channel_paths]],
+            [str(output_path_without_extension)],
+            save_probabilities=False,
+            overwrite=True,
+            folder_with_segs_from_prev_stage=None,
+        )
+        return
 
     predict_from_files = getattr(predictor, "predict_from_files", None)
 
