@@ -99,6 +99,11 @@ class MedicalAdminTests(TestCase):
         self.assertContains(response, "MEDICAL CDSS")
         self.assertContains(response, "의료정보 시스템 관리")
         self.assertContains(response, "admin/css/medical_admin.css")
+        self.assertContains(
+            response,
+            "https://medical-cdss-frontend-356595725907"
+            ".asia-southeast1.run.app",
+        )
 
     def test_user_changelist_supports_profileless_existing_accounts(self):
         response = self.client.get("/admin/auth/user/")

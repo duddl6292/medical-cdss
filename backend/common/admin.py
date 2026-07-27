@@ -1,3 +1,5 @@
+import os
+
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
@@ -11,6 +13,10 @@ admin.site.site_header = "MEDICAL CDSS 운영관리"
 admin.site.site_title = "Medical CDSS Admin"
 admin.site.index_title = "의료정보 시스템 관리"
 admin.site.empty_value_display = "—"
+admin.site.site_url = os.getenv(
+    "CDSS_FRONTEND_URL",
+    "https://medical-cdss-frontend-356595725907.asia-southeast1.run.app",
+)
 
 
 class UserProfileInline(admin.StackedInline):
