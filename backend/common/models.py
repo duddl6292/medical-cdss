@@ -20,6 +20,10 @@ class UserProfile(models.Model):
     )
     department = models.CharField(max_length=100, blank=True, default="")
 
+    class Meta:
+        verbose_name = "사용자 의료기관 프로필"
+        verbose_name_plural = "사용자 의료기관 프로필"
+
     def __str__(self):
         return f"{self.user.username} ({self.get_role_display()})"
 
@@ -39,6 +43,8 @@ class AuditEvent(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        verbose_name = "보안 감사 이벤트"
+        verbose_name_plural = "보안 감사 이벤트"
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=["action", "-created_at"]),

@@ -1,0 +1,132 @@
+:root {
+  --primary: #174ea6;
+  --secondary: #0b326f;
+  --accent: #2f6fed;
+  --header-bg: #0b2856;
+  --header-color: #fff;
+  --breadcrumbs-bg: #123b76;
+  --breadcrumbs-fg: #dbeafe;
+  --link-fg: #1456b8;
+  --link-hover-color: #0b3f91;
+  --body-bg: #f3f7fc;
+  --body-fg: #182438;
+  --hairline-color: #dbe4f0;
+  --border-color: #d3deec;
+  --darkened-bg: #edf3fa;
+  --selected-bg: #e7f0ff;
+  --selected-row: #f0f6ff;
+  --button-bg: #1763d6;
+  --button-hover-bg: #0f4faa;
+  --default-button-bg: #1763d6;
+  --close-button-bg: #64748b;
+  --delete-button-bg: #c93636;
+  --font-family-primary: Inter, Pretendard, "Noto Sans KR", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { letter-spacing: -0.01em; }
+#container { min-width: 320px; }
+#header {
+  min-height: 76px;
+  padding: 0 30px;
+  box-shadow: 0 2px 14px rgba(10, 35, 78, .2);
+}
+#branding { display: flex; align-items: center; min-height: 76px; }
+.medical-brand { display: flex; align-items: center; gap: 13px; color: white; }
+.medical-brand__mark {
+  display: grid; place-items: center; width: 38px; height: 38px;
+  border-radius: 11px; background: #fff; color: #1763d6;
+  font-size: 28px; font-weight: 500; box-shadow: 0 8px 18px rgba(0,0,0,.15);
+}
+.medical-brand strong { display: block; font-size: 17px; letter-spacing: .08em; }
+.medical-brand small { display: block; margin-top: 3px; color: #bcd4f6; font-size: 10px; letter-spacing: .09em; }
+.medical-global-nav { display: flex; align-items: center; gap: 18px; margin-left: auto; }
+.medical-global-nav a { color: #fff; font-weight: 700; }
+.medical-security { color: #d8e8ff; font-size: 12px; }
+.medical-security i { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: #39d98a; box-shadow: 0 0 0 4px rgba(57,217,138,.14); }
+#user-tools { font-size: 12px; }
+#user-tools a { border-bottom: 0; }
+div.breadcrumbs { padding: 13px 30px; }
+#content { padding: 28px 30px 50px; }
+#content-main { min-width: 0; }
+h1 { color: #102443; font-weight: 800; font-size: 25px; }
+h2, .module caption, .inline-group h2 { font-weight: 750; }
+.module, #changelist .actions, .inline-group {
+  overflow: hidden; border: 1px solid var(--border-color); border-radius: 13px;
+  background: #fff; box-shadow: 0 4px 14px rgba(34, 67, 115, .06);
+}
+.module caption, .inline-group h2 {
+  padding: 13px 16px; background: #eef4fd; color: #123d7b;
+  font-size: 13px; letter-spacing: .01em;
+}
+.dashboard .module table th { width: 100%; }
+.dashboard .module table td { white-space: nowrap; }
+.dashboard #content { width: auto; }
+.dashboard #content-main { width: calc(100% - 330px); }
+.dashboard #content-related {
+  width: 300px; margin-right: 0; border-radius: 13px;
+  border: 1px solid var(--border-color); background: #fff;
+}
+.dashboard #content-related .module { border: 0; box-shadow: none; }
+.medical-welcome {
+  display: flex; justify-content: space-between; gap: 24px; align-items: center;
+  margin-bottom: 18px; padding: 25px 28px; border-radius: 16px;
+  color: white; background: linear-gradient(115deg, #0b326f, #1763d6);
+  box-shadow: 0 12px 28px rgba(18, 73, 148, .18);
+}
+.medical-welcome h1 { margin: 7px 0; color: white; font-size: 25px; }
+.medical-welcome p { margin: 0; color: #dbeafe; }
+.medical-eyebrow { color: #9fc5ff; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
+.medical-welcome__notice {
+  display: flex; flex-direction: column; max-width: 340px; padding: 14px 17px;
+  border: 1px solid rgba(255,255,255,.18); border-radius: 11px;
+  background: rgba(255,255,255,.08); font-size: 12px;
+}
+.medical-welcome__notice span { margin-top: 5px; color: #dbeafe; line-height: 1.5; }
+.medical-quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+.medical-quick-grid a {
+  position: relative; display: flex; flex-direction: column; min-height: 112px;
+  padding: 18px; border: 1px solid var(--border-color); border-radius: 13px;
+  background: #fff; box-shadow: 0 4px 12px rgba(34,67,115,.05);
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.medical-quick-grid a:hover { transform: translateY(-2px); border-color: #94b8ec; box-shadow: 0 10px 22px rgba(34,67,115,.11); }
+.medical-quick-grid span { position: absolute; right: 14px; top: 12px; color: #c9d9ef; font-size: 20px; font-weight: 900; }
+.medical-quick-grid strong { color: #132c51; font-size: 14px; }
+.medical-quick-grid small { margin-top: 9px; color: #64748b; line-height: 1.5; }
+#changelist { background: transparent; }
+#changelist .changelist-form-container { min-width: 0; }
+#changelist table { border: 1px solid var(--border-color); border-radius: 12px; background: #fff; }
+#changelist table thead th { padding: 13px 10px; background: #edf3fb; color: #344968; }
+#changelist table tbody td, #changelist table tbody th { padding: 13px 10px; vertical-align: middle; }
+#changelist-filter { border: 1px solid var(--border-color); border-radius: 12px; background: #fff; }
+#changelist-filter h2 { border-radius: 12px 12px 0 0; background: #123b76; }
+#toolbar, #changelist .actions {
+  margin-bottom: 14px; padding: 12px; border: 1px solid var(--border-color);
+  border-radius: 12px; background: #fff;
+}
+#toolbar form input[type="text"] { min-height: 39px; border-radius: 8px; }
+input, textarea, select { border-radius: 8px; border-color: #c9d6e6; }
+input:focus, textarea:focus, select:focus { border-color: #3576d3; box-shadow: 0 0 0 3px rgba(47,111,237,.12); outline: none; }
+.button, input[type="submit"], input[type="button"], .submit-row input, a.button { border-radius: 8px; font-weight: 700; }
+.submit-row { border: 1px solid var(--border-color); border-radius: 12px; background: #f7faff; }
+.form-row { padding: 14px 12px; }
+.aligned label { color: #3b4f6b; font-weight: 700; }
+.messagelist li { border-radius: 10px; background-position: 14px 14px; }
+.object-tools a { border-radius: 8px; background: #1763d6; }
+.paginator { border-radius: 0 0 12px 12px; }
+
+@media (max-width: 1024px) {
+  .medical-quick-grid { grid-template-columns: repeat(2, 1fr); }
+  .dashboard #content-main { width: 100%; }
+  .dashboard #content-related { width: 100%; margin-top: 20px; }
+  .medical-welcome { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 767px) {
+  #header { padding: 0 16px; }
+  #content { padding: 20px 14px 40px; }
+  .medical-global-nav, .medical-brand small { display: none; }
+  .medical-quick-grid { grid-template-columns: 1fr; }
+  .medical-welcome { padding: 21px; }
+}

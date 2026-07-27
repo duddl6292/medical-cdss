@@ -25,3 +25,4 @@ django-storages==1.14.2
 google-cloud-storage==3.3.1
 google-auth==2.40.3
 gunicorn==23.0.0
+whitenoise==6.12.0

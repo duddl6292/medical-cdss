@@ -15,6 +15,7 @@ RUN python -m pip install --upgrade pip \
 COPY backend /workspace/backend
 
 WORKDIR /workspace/backend
+RUN python manage.py collectstatic --noinput
 
 EXPOSE 8080
 

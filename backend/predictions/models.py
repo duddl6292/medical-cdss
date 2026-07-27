@@ -51,6 +51,10 @@ class Prediction(models.Model):
         auto_now=True,
     )
 
+    class Meta:
+        verbose_name = "AI 분석 작업"
+        verbose_name_plural = "AI 분석 작업"
+
     def __str__(self):
         return f"CT {self.case.ct_id} - {self.status}"
     
@@ -121,6 +125,10 @@ class PredictionResult(models.Model):
     message = models.TextField(blank=True, default="")
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "AI 분석 결과"
+        verbose_name_plural = "AI 분석 결과"
 
     def __str__(self):
         return f"분석 결과 - {self.prediction.job_id}"

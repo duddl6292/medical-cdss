@@ -39,5 +39,9 @@ class Case(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = "CT 검사"
+        verbose_name_plural = "CT 검사"
+
     def __str__(self):
         return f"CT {self.ct_id}"

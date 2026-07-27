@@ -1,0 +1,62 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">{% endblock %}
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+
+{% block content %}
+<section class="medical-welcome">
+  <div>
+    <span class="medical-eyebrow">HOSPITAL INFORMATION OPERATIONS</span>
+    <h1>의료정보 시스템 관리</h1>
+    <p>계정과 접근권한, 검사 데이터, AI 분석 상태 및 감사기록을 안전하게 관리합니다.</p>
+  </div>
+  <div class="medical-welcome__notice">
+    <strong>관리자 보안 원칙</strong>
+    <span>최소 권한을 적용하고 사용 중지 계정은 즉시 비활성화하세요.</span>
+  </div>
+</section>
+<div class="medical-quick-grid">
+  <a href="{% url 'admin:auth_user_changelist' %}">
+    <span>01</span><strong>사용자·의료진</strong><small>계정, 역할, 부서, 활성 상태</small>
+  </a>
+  <a href="{% url 'admin:cases_case_changelist' %}">
+    <span>02</span><strong>검사 데이터</strong><small>비식별 검사와 검토 상태</small>
+  </a>
+  <a href="{% url 'admin:predictions_prediction_changelist' %}">
+    <span>03</span><strong>AI 분석 운영</strong><small>작업 상태, 오류, 결과 확인</small>
+  </a>
+  <a href="{% url 'admin:common_auditevent_changelist' %}">
+    <span>04</span><strong>보안 감사기록</strong><small>로그인, 업로드, 검토 추적</small>
+  </a>
+</div>
+<div id="content-main" class="app-list">
+  {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related">
+  <div class="module" id="recent-actions-module">
+    <h2>{% translate "Recent actions" %}</h2>
+    <h3>{% translate "My actions" %}</h3>
+    {% load log %}
+    {% get_admin_log 10 as admin_log for_user user %}
+    {% if not admin_log %}
+      <p>{% translate "None available" %}</p>
+    {% else %}
+      <ul class="actionlist">
+      {% for entry in admin_log %}
+        <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+          {% if entry.is_deletion or not entry.get_admin_url %}{{ entry.object_repr }}{% else %}<a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>{% endif %}
+          <br>{% if entry.content_type %}<span class="mini quiet">{{ entry.content_type.name|capfirst }}</span>{% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

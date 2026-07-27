@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | Medical CDSS 운영관리{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/css/medical_admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div class="medical-brand">
+  <span class="medical-brand__mark" aria-hidden="true">+</span>
+  <span>
+    <strong>MEDICAL CDSS</strong>
+    <small>Clinical AI Operations Console</small>
+  </span>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<div class="medical-global-nav">
+  <span class="medical-security"><i></i> 보안 연결</span>
+  <a href="/" target="_blank" rel="noopener">CDSS 화면 열기</a>
+</div>
+{% endblock %}

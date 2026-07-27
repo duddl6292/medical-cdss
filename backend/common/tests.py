@@ -81,3 +81,28 @@ class DashboardApiTests(TestCase):
             response.json()["recent"][0]["subject_id"],
             "DEMO-001",
         )
+
+
+class MedicalAdminTests(TestCase):
+    def setUp(self):
+        self.admin = get_user_model().objects.create_superuser(
+            username="hospital-admin",
+            password="test-password",
+            email="admin@example.com",
+        )
+        self.client.force_login(self.admin)
+
+    def test_admin_index_uses_medical_operations_branding(self):
+        response = self.client.get("/admin/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "MEDICAL CDSS")
+        self.assertContains(response, "의료정보 시스템 관리")
+        self.assertContains(response, "admin/css/medical_admin.css")
+
+    def test_user_changelist_supports_profileless_existing_accounts(self):
+        response = self.client.get("/admin/auth/user/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "hospital-admin")
+        self.assertContains(response, "시스템 관리자")
