@@ -1,0 +1,23 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - frontend/Dockerfile
+      - --build-arg
+      - VITE_API_BASE_URL=${_BACKEND_URL}
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/medical-cdss-frontend:${_IMAGE_TAG}
+      - .
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/medical-cdss-frontend:${_IMAGE_TAG}
+
+substitutions:
+  _REGION: asia-southeast1
+  _AR_REPOSITORY: bhsd-models
+  _IMAGE_TAG: manual
+  _BACKEND_URL: http://localhost:8000
+
+options:
+  logging: CLOUD_LOGGING_ONLY
