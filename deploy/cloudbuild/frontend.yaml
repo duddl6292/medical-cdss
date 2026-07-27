@@ -6,6 +6,8 @@ steps:
       - frontend/Dockerfile
       - --build-arg
       - VITE_API_BASE_URL=${_BACKEND_URL}
+      - --build-arg
+      - VITE_ADMIN_URL=${_ADMIN_URL}
       - -t
       - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/medical-cdss-frontend:${_IMAGE_TAG}
       - .
@@ -19,6 +21,7 @@ substitutions:
   _IMAGE_TAG: manual
   # Empty means same-origin /api; Nginx forwards it to BACKEND_ORIGIN at runtime.
   _BACKEND_URL: ""
+  _ADMIN_URL: https://medical-cdss-backend-356595725907.asia-southeast1.run.app/admin/
 
 options:
   logging: CLOUD_LOGGING_ONLY
