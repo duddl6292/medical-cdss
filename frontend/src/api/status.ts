@@ -15,6 +15,7 @@ export type StatusResponse = {
   review_status: "pending" | "reviewed";
   elapsed_time: number;
   error_message: string | null;
+  created_at: string;
   updated_at: string;
 };
 

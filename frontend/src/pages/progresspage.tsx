@@ -20,6 +20,10 @@ function ProgressPage() {
     Number.isInteger(caseId) && caseId > 0;
 
   const [progress, setProgress] = useState(0);
+  const [subjectId, setSubjectId] = useState("-");
+  const [createdAt, setCreatedAt] = useState("");
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
   const [status, setStatus] =
     useState<AnalysisStatus>(
       isValidCaseId ? "waiting" : "failed",
@@ -33,10 +37,18 @@ function ProgressPage() {
     (next: {
       progress: number;
       status: AnalysisStatus;
+      subject_id?: string;
+      elapsed_time?: number;
+      created_at?: string;
       error_message?: string | null;
     }) => {
       setProgress(next.progress);
       setStatus(next.status);
+      if (next.subject_id) setSubjectId(next.subject_id);
+      if (next.created_at) setCreatedAt(next.created_at);
+      if (next.elapsed_time !== undefined) {
+        setElapsedTime(next.elapsed_time);
+      }
       setErrorMessage(next.error_message ?? null);
     },
     [],
@@ -89,8 +101,24 @@ function ProgressPage() {
     };
   }, [applyStatus, caseId, handleRefresh, isValidCaseId]);
 
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
   const isCompleted = progress >= 100;
   const isFailed = status === "failed";
+  const displayedElapsedTime =
+    !isCompleted && createdAt
+      ? Math.max(
+          elapsedTime,
+          (now - new Date(createdAt).getTime()) /
+            1000,
+        )
+      : elapsedTime;
 
   return (
     <AppLayout>
@@ -189,16 +217,31 @@ function ProgressPage() {
 
               <dl className="mt-5 divide-y divide-slate-200">
                 <InfoRow label="CT ID" value={ctId} />
-                <InfoRow label="환자 ID" value="P001" />
+                <InfoRow
+                  label="비식별 대상 ID"
+                  value={subjectId}
+                />
                 <InfoRow
                   label="분석 상태"
-                  value={isCompleted ? "분석 완료" : "분석 중"}
+                  value={getStatusLabel(status)}
                 />
-                <InfoRow label="시작 시간" value="2026-07-26 00:15" />
-                <InfoRow label="경과 시간" value="00:42" />
                 <InfoRow
-                  label="예상 남은 시간"
-                  value={isCompleted ? "완료" : "약 15초"}
+                  label="시작 시간 (KST)"
+                  value={
+                    createdAt
+                      ? formatSeoulTime(createdAt)
+                      : "-"
+                  }
+                />
+                <InfoRow
+                  label={
+                    isCompleted
+                      ? "총 소요 시간"
+                      : "경과 시간"
+                  }
+                  value={formatElapsedTime(
+                    displayedElapsedTime,
+                  )}
                 />
               </dl>
             </article>
@@ -271,6 +314,48 @@ function InfoRow({ label, value }: InfoRowProps) {
       </dd>
     </div>
   );
+}
+
+function formatSeoulTime(value: string) {
+  return new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date(value));
+}
+
+function formatElapsedTime(value: number) {
+  const totalSeconds = Math.max(
+    0,
+    Math.floor(value),
+  );
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor(
+    (totalSeconds % 3600) / 60,
+  );
+  const seconds = totalSeconds % 60;
+
+  return [hours, minutes, seconds]
+    .map((part) => String(part).padStart(2, "0"))
+    .join(":");
+}
+
+function getStatusLabel(status: AnalysisStatus) {
+  switch (status) {
+    case "completed":
+      return "분석 완료";
+    case "processing":
+      return "분석 중";
+    case "failed":
+      return "분석 실패";
+    case "waiting":
+    default:
+      return "분석 대기";
+  }
 }
 
 type AnalysisFlowStepProps = {

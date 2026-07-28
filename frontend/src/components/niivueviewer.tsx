@@ -369,6 +369,22 @@ function NiivueViewer({
     );
   };
 
+  /*
+   * 현재 뷰어 캔버스를 PNG로 저장합니다.
+   * 슬라이스, 화면 방향, 확대 비율, 병변 오버레이가 그대로 반영됩니다.
+   */
+  const handleSavePng = async () => {
+    const nv = niivueRef.current;
+
+    if (!nv) {
+      return;
+    }
+
+    await nv.saveScene(
+      `medical-cdss-${viewerMode}-slice-${sliceIndex}.png`,
+    );
+  };
+
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <div className="grid min-h-[560px] grid-cols-1 lg:grid-cols-[64px_minmax(0,1fr)_270px]">
@@ -642,6 +658,16 @@ function NiivueViewer({
               className="col-span-2 rounded-lg bg-slate-800 px-3 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
             >
               화면 초기화
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                void handleSavePng()
+              }
+              className="col-span-2 rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+            >
+              현재 뷰 PNG 저장
             </button>
           </div>
         </aside>

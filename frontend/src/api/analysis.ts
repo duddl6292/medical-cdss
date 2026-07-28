@@ -15,6 +15,7 @@ export type CaseCreateResponse = {
   job_id: string;
   status: AnalysisStatus;
   progress: number;
+  elapsed_time: number;
   created_at: string;
 };
 

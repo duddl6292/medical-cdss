@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 
 import { getArtifactObjectUrl } from "../api/artifacts";
 import { downloadResultFile } from "../api/download";
-import { getAnalysisResult, reviewAnalysisResult, type ResultResponse } from "../api/result";
+import { getAnalysisResult, type ResultResponse } from "../api/result";
 import NiivueViewer, { type ViewerMode } from "../components/niivueviewer";
 import AppLayout from "../layouts/applayout";
 
@@ -17,8 +17,6 @@ export default function ResultPage() {
   const [mode, setMode] = useState<ViewerMode>("axial");
   const [opacity, setOpacity] = useState(0.6);
   const [visible, setVisible] = useState(true);
-  const [note, setNote] = useState("");
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -36,7 +34,6 @@ export default function ResultPage() {
         ]);
         if (!active) return;
         setResult(response);
-        setNote(response.review_note ?? "");
         setOriginalUrl(originalObjectUrl);
         setMaskUrl(maskObjectUrl);
       } catch (requestError) {
@@ -52,19 +49,6 @@ export default function ResultPage() {
       if (maskObjectUrl) URL.revokeObjectURL(maskObjectUrl);
     };
   }, [caseId]);
-
-  async function saveReview() {
-    if (!result) return;
-    setSaving(true);
-    try {
-      const review = await reviewAnalysisResult(result.case_id, note);
-      setResult({ ...result, ...review, review_note: note });
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "검토 저장에 실패했습니다.");
-    } finally {
-      setSaving(false);
-    }
-  }
 
   return (
     <AppLayout>
@@ -91,18 +75,22 @@ export default function ResultPage() {
                 <dl className="mt-4 space-y-3 text-sm">
                   <Info label="병변 부피" value={`${result.lesion_volume_ml ?? 0} mL`} />
                   <Info label="병변 슬라이스" value={`${result.lesion_slice_count}개`} />
-                  <Info label="최대 병변 슬라이스" value={`${result.max_lesion_slice ?? "-"}`} />
+                  <Info label="최대 병변 슬라이스" value={formatViewerSlice(result.max_lesion_slice)} />
                   <Info label="추론 시간" value={`${result.inference_time_seconds.toFixed(2)}초`} />
                   <Info label="모델 버전" value={result.model_version ?? "-"} />
                 </dl>
                 <button onClick={() => void downloadResultFile(result.case_id, "mask")} className="mt-5 w-full rounded-xl bg-blue-600 p-3 text-sm font-bold text-white">분할 마스크 다운로드</button>
               </section>
               <section className="rounded-2xl border bg-white p-6 shadow-sm">
-                <h2 className="font-bold">의료진 검토</h2>
-                <p className="mt-2 text-sm text-slate-500">{result.review_status === "reviewed" ? `검토 완료 · ${result.reviewed_by}` : "검토 대기"}</p>
-                <textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={2000} placeholder="비식별 임상 검토 메모"
-                  className="mt-4 min-h-28 w-full rounded-xl border p-3 text-sm" />
-                <button onClick={saveReview} disabled={saving} className="mt-3 w-full rounded-xl border border-blue-200 p-3 text-sm font-bold text-blue-700 disabled:opacity-50">{saving ? "저장 중..." : "검토 완료로 저장"}</button>
+                <h2 className="font-bold">AI 분석 요약</h2>
+                <p className="mt-4 text-sm leading-7 text-slate-600">
+                  병변은 {formatViewerSlice(result.lesion_slice_start)}번부터{" "}
+                  {formatViewerSlice(result.lesion_slice_end)}번 슬라이스 범위 내 총{" "}
+                  {result.lesion_slice_count}개 슬라이스에서 관찰됩니다.
+                  가장 큰 병변 면적을 갖는 슬라이스는{" "}
+                  {formatViewerSlice(result.max_lesion_slice)}번이며, 총 병변 부피는{" "}
+                  {(result.lesion_volume_ml ?? 0).toFixed(2)}mL입니다.
+                </p>
               </section>
             </aside>
           </div>
@@ -114,4 +102,8 @@ export default function ResultPage() {
 
 function Info({ label, value }: { label: string; value: string }) {
   return <div className="flex justify-between gap-3 border-b pb-3"><dt className="text-slate-500">{label}</dt><dd className="font-bold">{value}</dd></div>;
+}
+
+function formatViewerSlice(value: number | null) {
+  return value === null ? "-" : String(value + 1);
 }
